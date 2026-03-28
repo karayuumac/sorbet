@@ -71,8 +71,9 @@
 # lambda1 = lambda {|x| x**2 }
 # ```
 #
-# *   Use the Lambda literal syntax (also constructs a proc with lambda
-#     semantics):
+# *   Use the [Lambda proc
+#     literal](doc/syntax/literals_rdoc.html#label-Lambda+Proc+Literals) syntax
+#     (also constructs a proc with lambda semantics):
 #
 # ```ruby
 # lambda2 = ->(x) { x**2 }
@@ -185,7 +186,7 @@
 # ```ruby
 # p = proc {|x, y| x }
 # l = lambda {|x, y| x }
-# [[1, 2], [3, 4]].map(&p) #=> [1, 2]
+# [[1, 2], [3, 4]].map(&p) #=> [1, 3]
 # [[1, 2], [3, 4]].map(&l) # ArgumentError: wrong number of arguments (given 1, expected 2)
 # ```
 #
@@ -221,7 +222,7 @@
 # ## Conversion of other objects to procs
 #
 # Any object that implements the `to_proc` method can be converted into a proc
-# by the `&` operator, and therefore con be consumed by iterators.
+# by the `&` operator, and therefore can be consumed by iterators.
 #
 # ```ruby
 # class Greeter
@@ -320,7 +321,7 @@
 # To avoid conflicts, naming local variables or method arguments `_1`, `_2` and
 # so on, causes a warning.
 #
-# ```ruby
+# ```
 # _1 = 'test'
 # # warning: `_1' is reserved as numbered parameter
 # ```
@@ -347,7 +348,7 @@
 #
 # Numbered parameters were introduced in Ruby 2.7.
 class Proc < Object
-  # Creates a new [`Proc`](https://docs.ruby-lang.org/en/3.2/Proc.html)
+  # Creates a new [`Proc`](https://docs.ruby-lang.org/en/2.7.0/Proc.html)
   # object, bound to the current context.
   #
   # ```ruby
@@ -355,8 +356,9 @@ class Proc < Object
   # proc.call   #=> "hello"
   # ```
   #
-  # Raises [`ArgumentError`](https://docs.ruby-lang.org/en/3.2/ArgumentError.html)
-  # if called without a block.
+  # Raises
+  # [`ArgumentError`](https://docs.ruby-lang.org/en/2.7.0/ArgumentError.html) if
+  # called without a block.
   #
   # ```ruby
   # Proc.new    #=> ArgumentError
@@ -364,16 +366,91 @@ class Proc < Object
   sig {params(blk: Proc).returns(T.attached_class)}
   def self.new(&blk); end
 
+  # Returns a proc that is the composition of this proc and the given *g*. The
+  # returned proc takes a variable number of arguments, calls *g* with them then
+  # calls this proc with the result.
+  #
+  # ```ruby
+  # f = proc {|x| x * x }
+  # g = proc {|x| x + x }
+  # p (f << g).call(2) #=> 16
+  # ```
+  #
+  # See
+  # [`Proc#&gt;&gt;`](https://docs.ruby-lang.org/en/2.7.0/Proc.html#method-i-3E-3E)
+  # for detailed explanations.
   sig {params(g: T.untyped).returns(T.untyped)}
   def <<(g); end
 
+  # Returns a proc that is the composition of this proc and the given *g*. The
+  # returned proc takes a variable number of arguments, calls this proc with
+  # them then calls *g* with the result.
+  #
+  # ```ruby
+  # f = proc {|x| x * x }
+  # g = proc {|x| x + x }
+  # p (f >> g).call(2) #=> 8
+  # ```
+  #
+  # *g* could be other [`Proc`](https://docs.ruby-lang.org/en/2.7.0/Proc.html),
+  # or [`Method`](https://docs.ruby-lang.org/en/2.7.0/Method.html), or any other
+  # object responding to `call` method:
+  #
+  # ```ruby
+  # class Parser
+  #   def self.call(text)
+  #      # ...some complicated parsing logic...
+  #   end
+  # end
+  #
+  # pipeline = File.method(:read) >> Parser >> proc { |data| puts "data size: #{data.count}" }
+  # pipeline.call('data.json')
+  # ```
+  #
+  # See also
+  # [`Method#&gt;&gt;`](https://docs.ruby-lang.org/en/2.7.0/Method.html#method-i-3E-3E)
+  # and
+  # [`Method#&lt;&lt;`](https://docs.ruby-lang.org/en/2.7.0/Method.html#method-i-3C-3C).
   sig {params(g: T.untyped).returns(T.untyped)}
   def >>(g); end
 
-  # Invokes the block with `obj` as the proc's parameter like
-  # [`Proc#call`](https://docs.ruby-lang.org/en/2.7.0/Proc.html#method-i-call).
-  # This allows a proc object to be the target of a `when` clause in a case
-  # statement.
+  # Invokes the block, setting the block's parameters to the values in *params*
+  # using something close to method calling semantics. Returns the value of the
+  # last expression evaluated in the block.
+  #
+  # ```ruby
+  # a_proc = Proc.new {|scalar, *values| values.map {|value| value*scalar } }
+  # a_proc.call(9, 1, 2, 3)    #=> [9, 18, 27]
+  # a_proc[9, 1, 2, 3]         #=> [9, 18, 27]
+  # a_proc.(9, 1, 2, 3)        #=> [9, 18, 27]
+  # a_proc.yield(9, 1, 2, 3)   #=> [9, 18, 27]
+  # ```
+  #
+  # Note that `prc.()` invokes `prc.call()` with the parameters given. It's
+  # syntactic sugar to hide "call".
+  #
+  # For procs created using
+  # [`lambda`](https://docs.ruby-lang.org/en/2.7.0/Kernel.html#method-i-lambda)
+  # or `->()` an error is generated if the wrong number of parameters are passed
+  # to the proc. For procs created using
+  # [`Proc.new`](https://docs.ruby-lang.org/en/2.7.0/Proc.html#method-c-new) or
+  # [`Kernel.proc`](https://docs.ruby-lang.org/en/2.7.0/Kernel.html#method-i-proc),
+  # extra parameters are silently discarded and missing parameters are set to
+  # `nil`.
+  #
+  # ```ruby
+  # a_proc = proc {|a,b| [a,b] }
+  # a_proc.call(1)   #=> [1, nil]
+  #
+  # a_proc = lambda {|a,b| [a,b] }
+  # a_proc.call(1)   # ArgumentError: wrong number of arguments (given 1, expected 2)
+  # ```
+  #
+  # See also
+  # [`Proc#lambda?`](https://docs.ruby-lang.org/en/2.7.0/Proc.html#method-i-lambda-3F).
+  #
+  # Alias for:
+  # [`call`](https://docs.ruby-lang.org/en/2.7.0/Proc.html#method-i-call)
   def ===(*_); end
 
   # Returns the number of mandatory arguments. If the block is declared to take
@@ -463,6 +540,11 @@ class Proc < Object
   #
   # See also
   # [`Proc#lambda?`](https://docs.ruby-lang.org/en/2.7.0/Proc.html#method-i-lambda-3F).
+  #
+  # Also aliased as:
+  # [`[]`](https://docs.ruby-lang.org/en/2.7.0/Proc.html#method-i-5B-5D),
+  # [`===`](https://docs.ruby-lang.org/en/2.7.0/Proc.html#method-i-3D-3D-3D),
+  # [`yield`](https://docs.ruby-lang.org/en/2.7.0/Proc.html#method-i-yield)
   sig do
     params(
         arg0: T.untyped,
@@ -506,6 +588,9 @@ class Proc < Object
   #
   # See also
   # [`Proc#lambda?`](https://docs.ruby-lang.org/en/2.7.0/Proc.html#method-i-lambda-3F).
+  #
+  # Alias for:
+  # [`call`](https://docs.ruby-lang.org/en/2.7.0/Proc.html#method-i-call)
   sig do
     params(
         arg0: BasicObject,
@@ -703,19 +788,11 @@ class Proc < Object
 
 
 
-  # Returns the parameter information of this proc. If the lambda keyword is
-  # provided and not nil, treats the proc as a lambda if true and as a
-  # non-lambda if false.
+  # Returns the parameter information of this proc.
   #
   # ```ruby
-  # prc = proc{|x, y=42, *other|}
-  # prc.parameters  #=> [[:opt, :x], [:opt, :y], [:rest, :other]]
   # prc = lambda{|x, y=42, *other|}
   # prc.parameters  #=> [[:req, :x], [:opt, :y], [:rest, :other]]
-  # prc = proc{|x, y=42, *other|}
-  # prc.parameters(lambda: true)  #=> [[:req, :x], [:opt, :y], [:rest, :other]]
-  # prc = lambda{|x, y=42, *other|}
-  # prc.parameters(lambda: false) #=> [[:opt, :x], [:opt, :y], [:rest, :other]]
   # ```
   sig do
     params(
@@ -775,6 +852,9 @@ class Proc < Object
   sig {returns(String)}
   def to_s(); end
 
+  # Returns the unique identifier for this proc, along with an indication of
+  # where the proc was defined.
+  #
   # Alias for:
   # [`to_s`](https://docs.ruby-lang.org/en/2.7.0/Proc.html#method-i-to_s)
   sig {returns(String)}
@@ -814,5 +894,8 @@ class Proc < Object
   #
   # See also
   # [`Proc#lambda?`](https://docs.ruby-lang.org/en/2.7.0/Proc.html#method-i-lambda-3F).
+  #
+  # Alias for:
+  # [`call`](https://docs.ruby-lang.org/en/2.7.0/Proc.html#method-i-call)
   def yield(*_); end
 end
