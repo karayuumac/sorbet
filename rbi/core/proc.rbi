@@ -364,6 +364,12 @@ class Proc < Object
   sig {params(blk: Proc).returns(T.attached_class)}
   def self.new(&blk); end
 
+  sig {params(g: T.untyped).returns(T.untyped)}
+  def <<(g); end
+
+  sig {params(g: T.untyped).returns(T.untyped)}
+  def >>(g); end
+
   # Invokes the block with `obj` as the proc's parameter like
   # [`Proc#call`](https://docs.ruby-lang.org/en/2.7.0/Proc.html#method-i-call).
   # This allows a proc object to be the target of a `when` clause in a case
