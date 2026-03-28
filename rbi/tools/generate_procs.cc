@@ -38,7 +38,31 @@ void emitProc(ofstream &out, int arity) {
         out << "arg" << i;
     }
     out << "); end" << '\n';
+
     out << '\n';
+
+    out << "  sig do" << '\n';
+    out << "    type_parameters(:U)" << '\n';
+    out << "      .params(g: T.proc.params(return: Return).returns(T.type_parameter(:U)))" << '\n';
+    if (arity > 0) {
+        out << "      .returns(T.proc.params(";
+        for (int i = 0; i < arity; ++i) {
+            out << "arg" << i << ": Arg" << i;
+            if (i != arity - 1) {
+                out << ", ";
+            }
+        }
+        out << ").returns(T.type_parameter(:U)))" << '\n';
+    } else {
+        out << "      .returns(T.proc.returns(T.type_parameter(:U)))" << '\n';
+    }
+    out << "  end" << '\n';
+    out << "  sig {params(g: T.any(Proc, Method)).returns(Proc)}" << '\n';
+    out << "  sig {params(g: T.untyped).returns(T.untyped)}" << '\n';
+    out << "  def >>(g); end" << '\n';
+
+    out << '\n';
+
     out << "  alias_method :[], :call" << '\n';
     out << "end" << '\n' << '\n';
 }

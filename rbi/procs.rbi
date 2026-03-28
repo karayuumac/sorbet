@@ -10,6 +10,15 @@ class Proc0 < Proc
   sig {returns(Return)}
   def call(); end
 
+  sig do
+    type_parameters(:U)
+      .params(g: T.proc.params(return: Return).returns(T.type_parameter(:U)))
+      .returns(T.proc.returns(T.type_parameter(:U)))
+  end
+  sig {params(g: T.any(Proc, Method)).returns(Proc)}
+  sig {params(g: T.untyped).returns(T.untyped)}
+  def >>(g); end
+
   alias_method :[], :call
 end
 
@@ -24,6 +33,15 @@ class Proc1 < Proc
     .returns(Return)
   end
   def call(arg0); end
+
+  sig do
+    type_parameters(:U)
+      .params(g: T.proc.params(return: Return).returns(T.type_parameter(:U)))
+      .returns(T.proc.params(arg0: Arg0).returns(T.type_parameter(:U)))
+  end
+  sig {params(g: T.any(Proc, Method)).returns(Proc)}
+  sig {params(g: T.untyped).returns(T.untyped)}
+  def >>(g); end
 
   alias_method :[], :call
 end
@@ -41,6 +59,15 @@ class Proc2 < Proc
     .returns(Return)
   end
   def call(arg0, arg1); end
+
+  sig do
+    type_parameters(:U)
+      .params(g: T.proc.params(return: Return).returns(T.type_parameter(:U)))
+      .returns(T.proc.params(arg0: Arg0, arg1: Arg1).returns(T.type_parameter(:U)))
+  end
+  sig {params(g: T.any(Proc, Method)).returns(Proc)}
+  sig {params(g: T.untyped).returns(T.untyped)}
+  def >>(g); end
 
   alias_method :[], :call
 end
@@ -60,6 +87,15 @@ class Proc3 < Proc
     .returns(Return)
   end
   def call(arg0, arg1, arg2); end
+
+  sig do
+    type_parameters(:U)
+      .params(g: T.proc.params(return: Return).returns(T.type_parameter(:U)))
+      .returns(T.proc.params(arg0: Arg0, arg1: Arg1, arg2: Arg2).returns(T.type_parameter(:U)))
+  end
+  sig {params(g: T.any(Proc, Method)).returns(Proc)}
+  sig {params(g: T.untyped).returns(T.untyped)}
+  def >>(g); end
 
   alias_method :[], :call
 end
@@ -81,6 +117,15 @@ class Proc4 < Proc
     .returns(Return)
   end
   def call(arg0, arg1, arg2, arg3); end
+
+  sig do
+    type_parameters(:U)
+      .params(g: T.proc.params(return: Return).returns(T.type_parameter(:U)))
+      .returns(T.proc.params(arg0: Arg0, arg1: Arg1, arg2: Arg2, arg3: Arg3).returns(T.type_parameter(:U)))
+  end
+  sig {params(g: T.any(Proc, Method)).returns(Proc)}
+  sig {params(g: T.untyped).returns(T.untyped)}
+  def >>(g); end
 
   alias_method :[], :call
 end
@@ -104,6 +149,15 @@ class Proc5 < Proc
     .returns(Return)
   end
   def call(arg0, arg1, arg2, arg3, arg4); end
+
+  sig do
+    type_parameters(:U)
+      .params(g: T.proc.params(return: Return).returns(T.type_parameter(:U)))
+      .returns(T.proc.params(arg0: Arg0, arg1: Arg1, arg2: Arg2, arg3: Arg3, arg4: Arg4).returns(T.type_parameter(:U)))
+  end
+  sig {params(g: T.any(Proc, Method)).returns(Proc)}
+  sig {params(g: T.untyped).returns(T.untyped)}
+  def >>(g); end
 
   alias_method :[], :call
 end
@@ -129,6 +183,15 @@ class Proc6 < Proc
     .returns(Return)
   end
   def call(arg0, arg1, arg2, arg3, arg4, arg5); end
+
+  sig do
+    type_parameters(:U)
+      .params(g: T.proc.params(return: Return).returns(T.type_parameter(:U)))
+      .returns(T.proc.params(arg0: Arg0, arg1: Arg1, arg2: Arg2, arg3: Arg3, arg4: Arg4, arg5: Arg5).returns(T.type_parameter(:U)))
+  end
+  sig {params(g: T.any(Proc, Method)).returns(Proc)}
+  sig {params(g: T.untyped).returns(T.untyped)}
+  def >>(g); end
 
   alias_method :[], :call
 end
@@ -156,6 +219,15 @@ class Proc7 < Proc
     .returns(Return)
   end
   def call(arg0, arg1, arg2, arg3, arg4, arg5, arg6); end
+
+  sig do
+    type_parameters(:U)
+      .params(g: T.proc.params(return: Return).returns(T.type_parameter(:U)))
+      .returns(T.proc.params(arg0: Arg0, arg1: Arg1, arg2: Arg2, arg3: Arg3, arg4: Arg4, arg5: Arg5, arg6: Arg6).returns(T.type_parameter(:U)))
+  end
+  sig {params(g: T.any(Proc, Method)).returns(Proc)}
+  sig {params(g: T.untyped).returns(T.untyped)}
+  def >>(g); end
 
   alias_method :[], :call
 end
@@ -185,6 +257,15 @@ class Proc8 < Proc
     .returns(Return)
   end
   def call(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7); end
+
+  sig do
+    type_parameters(:U)
+      .params(g: T.proc.params(return: Return).returns(T.type_parameter(:U)))
+      .returns(T.proc.params(arg0: Arg0, arg1: Arg1, arg2: Arg2, arg3: Arg3, arg4: Arg4, arg5: Arg5, arg6: Arg6, arg7: Arg7).returns(T.type_parameter(:U)))
+  end
+  sig {params(g: T.any(Proc, Method)).returns(Proc)}
+  sig {params(g: T.untyped).returns(T.untyped)}
+  def >>(g); end
 
   alias_method :[], :call
 end
@@ -216,6 +297,15 @@ class Proc9 < Proc
     .returns(Return)
   end
   def call(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8); end
+
+  sig do
+    type_parameters(:U)
+      .params(g: T.proc.params(return: Return).returns(T.type_parameter(:U)))
+      .returns(T.proc.params(arg0: Arg0, arg1: Arg1, arg2: Arg2, arg3: Arg3, arg4: Arg4, arg5: Arg5, arg6: Arg6, arg7: Arg7, arg8: Arg8).returns(T.type_parameter(:U)))
+  end
+  sig {params(g: T.any(Proc, Method)).returns(Proc)}
+  sig {params(g: T.untyped).returns(T.untyped)}
+  def >>(g); end
 
   alias_method :[], :call
 end
@@ -249,6 +339,15 @@ class Proc10 < Proc
     .returns(Return)
   end
   def call(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9); end
+
+  sig do
+    type_parameters(:U)
+      .params(g: T.proc.params(return: Return).returns(T.type_parameter(:U)))
+      .returns(T.proc.params(arg0: Arg0, arg1: Arg1, arg2: Arg2, arg3: Arg3, arg4: Arg4, arg5: Arg5, arg6: Arg6, arg7: Arg7, arg8: Arg8, arg9: Arg9).returns(T.type_parameter(:U)))
+  end
+  sig {params(g: T.any(Proc, Method)).returns(Proc)}
+  sig {params(g: T.untyped).returns(T.untyped)}
+  def >>(g); end
 
   alias_method :[], :call
 end
